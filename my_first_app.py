@@ -1,4 +1,5 @@
 # import libraries 
+import os 
 
 import streamlit as st 
 from streamlit_folium import folium_static
@@ -18,8 +19,12 @@ from folium.features import GeoJsonPopup, GeoJsonTooltip
 def read_csv(path):
     return pd.read_csv(path, compression='gzip', sep='\t', quotechar='"')
 
+# set path 
+path = os.path.dirname(__file__)
+# my_file = path+'/photo.png'
+
 # data prep to get relevant fields from input dataset
-housing_price_df = read_csv('C:/Users/Pinzhi Zhang/Desktop/Georgia_Tech/7_Spring_2022/CSE 6242/Streamlit/US Real Estate/state_market_tracker.tsv000.gz')
+housing_price_df = read_csv(path+'/state_market_tracker.tsv000.gz')
 housing_price_df = housing_price_df[['period_begin','period_end','period_duration','property_type','median_sale_price','median_sale_price_yoy','homes_sold','state_code']]
 housing_price_df = housing_price_df[(housing_price_df['period_begin'] >= '2020-10-01') & (housing_price_df['period_begin'] <= '2021-10-01')]
 
@@ -32,7 +37,7 @@ def read_file(path):
     return gpd.read_file(path)
 
 # read geojson file 
-gdf = read_file('C:/Users/Pinzhi Zhang/Desktop/Georgia_Tech/7_Spring_2022/CSE 6242/Streamlit/US Real Estate/us-state-boundaries.geojson') 
+gdf = read_file(path+'/us-state-boundaries.geojson') 
 # st.write(gdf.head())
 
 
@@ -87,7 +92,7 @@ folium.TileLayer('CartoDB positron', name = "Light Map", control=False).add_to(m
 
 # plot choropleth map using folium 
 choropleth1 = folium.Choropleth(
-    geo_data = 'C:/Users/Pinzhi Zhang/Desktop/Georgia_Tech/7_Spring_2022/CSE 6242/Streamlit/US Real Estate/us-state-boundaries.geojson',
+    geo_data = path+'/us-state-boundaries.geojson',  
     name = "Choropleth Map of U.S. Housing Prices", 
     data = df_final,
     # 2 columns in dataframe used to grab the median sales price for each state and plot it in the choropleth map
